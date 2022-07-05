@@ -1,0 +1,66 @@
+{
+  "name": "Limitless - Submit CSAT Testimonial to SmartCrowd v1 - Exported 2022-03-30 @ 14:16",
+  "integrationType": "custom-rest-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "https://${input.stage}.api.belimitless-app.io/crm/public/messages/${input.msgId}/testimonial?access_key=${input.accessKey}",
+      "requestType": "PUT",
+      "headers": {
+        "x-api-key": "${input.apikey}",
+        "Content-Type": "application/json"
+      },
+      "requestTemplate": "{\"testimonial\": \"$esc.jsonString(${input.testimonial})\"}"
+    },
+    "response": {
+      "translationMap": {},
+      "translationMapDefaults": {},
+      "successTemplate": "${rawResult}"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "title": "Message",
+        "type": "object",
+        "required": [
+          "msgId",
+          "testimonial",
+          "apikey",
+          "stage"
+        ],
+        "properties": {
+          "msgId": {
+            "type": "string"
+          },
+          "testimonial": {
+            "type": "string"
+          },
+          "accessKey": {
+            "type": "string"
+          },
+          "apikey": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "title": "Response",
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}
