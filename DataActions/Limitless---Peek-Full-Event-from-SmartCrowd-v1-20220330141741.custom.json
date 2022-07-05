@@ -1,0 +1,65 @@
+{
+  "name": "Limitless - Peek Full Event from SmartCrowd v1 - Exported 2022-03-30 @ 14:17",
+  "integrationType": "custom-rest-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "https://${input.stage}.api.belimitless-app.io/crm/integration/messages/peek/${input.conversationId}?updateType=${input.updateType}",
+      "requestType": "GET",
+      "headers": {
+        "x-api-key": "${input.apikey}"
+      },
+      "requestTemplate": "${input.rawRequest}"
+    },
+    "response": {
+      "translationMap": {
+        "length": "$.size()"
+      },
+      "translationMapDefaults": {
+        "length": "0"
+      },
+      "successTemplate": "{\"length\": ${length} }"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "title": "Input",
+        "type": "object",
+        "required": [
+          "conversationId",
+          "apikey",
+          "stage"
+        ],
+        "properties": {
+          "conversationId": {
+            "type": "string"
+          },
+          "apikey": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "updateType": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "title": "output",
+        "type": "object",
+        "properties": {
+          "length": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}
