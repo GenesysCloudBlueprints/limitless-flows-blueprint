@@ -76,6 +76,10 @@ The following are data actions to import:
 |[Get Full Event from SmartCrowd v1](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/DataActions/Limitless---Get-Full-Event-from-SmartCrowd-v1-2021062184345.custom.json)|Web Services|Open messaging flow - Email flow - Chat flow|Retrieves expert dialogue and SmartCrowd Message Status events from the Limitless event queue.|
 |[Send Email Reply v1](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/DataActions/Limitless---Send-Email-Reply-v1-20210722145321.custom.json)|Web Services|Email flow|Send the expert response via email using an SMTP server.|
 |[Shorten Link v1](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/DataActions/Limitless---Shorten-Link-v1-2021062184350.custom.json)|Web Services|Open messaging flow - Email flow - Chat flow |Used to call out to a 3rd Party url shortener to reduce the size of the CSAT link. The example url here is for Bitly: [Short links, big results](https://bitly.com/ "Goes to the Short links, big results page") and to use that service you need a Bitly account and then to input your account specific token into the header. You can also replace Bitly with your url shortener of choice.|
+|[Limitless - Accept Message to SmartCrowd v1](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/DataActions/Limitless---Accept-Message-to-SmartCrowd-v1-20220330141510.custom.json)|Web Services|- Open messaging flow - Chat flow |The customer acknowledges that the expert answer as satisfactory to their question.|
+|[Limitless - Submit CSAT Score to SmartCrowd v1](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/DataActions/Limitless---Submit-CSAT-Score-to-SmartCrowd-v1-20220330141620.custom.json)|Web Services|- Open messaging flow - Chat flow|The customer rates their experience with a score between 1-5.|
+|[Limitless - Submit CSAT Testimonial to SmartCrowd v1](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/DataActions/Limitless---Submit-CSAT-Testimonial-to-SmartCrowd-v1-20220330141647.custom.json)|Web Services|- Open messaging flow - Chat flow|The customer provides feedback based on their experience.|
+|[Limitless - Peek Full Event from SmartCrowd v1](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/DataActions/Limitless---Peek-Full-Event-from-SmartCrowd-v1-20220330141741.custom.json)|Web Services|- Open messaging flow - Chat flow|Monitors the queue for any Expert Dialogue and SmartCrowd Message Status events used to abort the Flow if events exist.|
 
 After importing all the data actions, you must publish them to be used in our Architect flows.
 
@@ -86,6 +90,7 @@ A Genesys Cloud Architect flow is required to send a customer question (from an 
 - [Limitless Chat Flow](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/ArchitectFlows/Limitless%20Chat%20Flow%20V2.0.0_v21-0.i3InboundChatFlow "Goes to the Limitless Chat Flow") - Connect Limitless  GigCX to your web chat channels (**Note**: This flow is compatible with web chat v1.1 & web chat v2)
 - [Limitless Email Flow](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/ArchitectFlows/Limitless%20Email%20Flow%20v2.0.0_v34-0.i3InboundEmailFlow "Goes to the Limitless Email Flow") - Connect Limitless GigCX to your email channels 
 - [Limitless Messaging Flow](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/ArchitectFlows/Limitless%20Messaging%20Flow%20v2.0.0_v26-0.i3InboundMessage "Goes to the Limitless Messaging Flow") - Connect Limitless GigCX to your open messaging channels
+- [Limitless CSAT Flow](https://github.com/GenesysCloudBlueprints/limitless-flows-blueprint/tree/main/blueprint/ArchitectFlows/CSATSurvey_v20-0.i3BotFlow "Goes to the Limitless CSAT Flow") - Collect in-channel CSAT for Messaging and Chat
 
 You can import these flows from the "Architect Flows" GUI. For more information see, [Import or export a flow](https://help.mypurecloud.com/?p=2730 "Goes to the the Import or export a flow article") in the Genesys Cloud Resource Center. Architect flows can also be import by using the [Archy](/devapps/archy/ "Goes to the Welcome to Archy page") command line tool.
 
@@ -199,9 +204,9 @@ The subsequent Event Type block evaluates the following cases:
 
 ![Send response block](images/012.png "Send response block")
 
-- ***Case 2*** - The expert expressed the conversation is complete and the event detects the Limitless GigCX update type = ‘cust\_confirmation’. If a CSAT is not sent, then this event triggers a CSAT link (shortened via a data action) sent to the customer. 
+- ***Case 2*** - The Expert has expressed an opinion that they believe the conversation to have been completed and this event is detected via the Limitless update type = ‘cust_confirmation’. If a CSAT hasn’t already been sent then this event triggers a Call Bot Flow called “CSATSurvey”. 
 
-![Confirmation of CSAT](images/013.png "Confirmation of CSAT")
+![Confirmation of CSAT](images/CSAT001.png "Confirmation of CSAT")
 
 - ***Case 3*** - A Limitless GigCX SmartCrowd status change event detects via the Limitless GigCX update type = ‘state’. These status changes are evaluated, and the following actions must be performed:
   - ***‘Escalated’*** - The expert crowd has decided they cannot resolve this question. This state detects that the customer receives a message that an agent is introduced into the conversation, and a ‘Transfer to ACD’ block brings in the agent.
@@ -346,9 +351,9 @@ Monitoring Limitless observes the Limitless GigCX event queue for expert dialogu
 
 ![Expert dialogue sent to customer via Send Response block](images/028.png "Expert dialogue sent to customer via Send Response block")
 
-- ***Case 2*** - The expert has expressed an opinion they believe that the conversation is complete and this event detects via the Limitless GigCX update type = ‘cust\_confirmation’. If a CSAT is not sent, then this event triggers a CSAT link (shortened via a data action), which sends the action to the customer.
+- ***Case 2*** - The Expert has expressed an opinion that they believe the conversation to have been completed and this event is detected via the Limitless update type = ‘cust_confirmation’. If a CSAT hasn’t already been sent then this event triggers a Call Bot Flow called “CSATSurvey”. 
 
-![Confirmation of CSAT](images/029.png "Confirmation of CSAT")
+![Confirmation of CSAT](images/CSAT002.png "Confirmation of CSAT")
 
 - ***Case 3*** - A Limitless GigCX SmartCrowd status change event detects via the Limitless GigCX update type = ‘state’. These status changes are evaluated, and the following actions must be performed:
   - ***‘Escalated’*** - The expert crowd has decided they cannot resolve the question. This state detects that the customer receives a message that an agent is introduced into the conversation, and a ‘Transfer to ACD’ block brings in the agent.
@@ -357,6 +362,36 @@ Monitoring Limitless observes the Limitless GigCX event queue for expert dialogu
   - ***‘Resolved’*** - The Limitless GigCX lifecycle is complete, and the question is resolved. This is an end state and the flow disconnects.
 
 ![Limitless SmartCrowd status change event](images/030.png "Limitless SmartCrowd status change event")
+
+## **CSAT**
+This flow is being used to offer in-channel CSAT for open Messaging and Chat.
+
+**Starting State**
+This state contains:
+- **A Data Action** - Monitors (peeking in to) the queue for any Expert Dialogue and SmartCrowd Message Status events used to abort the Flow if events exist ie. expert dialogue.
+![](images/CSAT003.png "Peek queue for dialogue")
+
+**Decision:**
+If successful ie. If there are any customer dialogues, exit the flow. Included in #30 is optional Debug communication to indicate the number of events found.  
+If there are no further events, send a prompt to the customer to Accept the answer.
+
+**Call Data Action:** Limitless - Accept Message to SmartCrowd v1
+Should the customer accept the answer, call the data action and send the value to Limitless. 
+
+![](images/CSAT004.png "Has the answer been accepted?")
+
+Monitor Limitless again for any other events (#28). 
+**Decision:** If no further events exist, proceed to prompt the customer for a rating otherwise exit the flow.
+**Call Data action:** “Limitless - Submit CSAT Score to SmartCrowd v1” to submit the Score to Limitless.
+
+![](images/CSAT005.png "Customer prmopt")
+
+**Decision:** If no further events exist, proceed to prompt the customer for a Testimonial (#17) otherwise exit the flow.
+**Call Data Action:** “Limitless - Submit CSAT Testimonial to SmartCrowd v1” if successful to submit the Testimonial to Limitless.
+
+![](images/CSAT006.png "Confirmation")
+
+**Communicate:** Thank the customer for providing CSAT and exit the flow.
 
 :::primary
 The use of the Limitless GigCX flows has no impact on Cloud Analytics or reporting.
